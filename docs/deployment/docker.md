@@ -37,4 +37,4 @@ Route the app hostname to `127.0.0.1:3000` and API hostname to `127.0.0.1:5001` 
 - Do not run more than one migration process at once.
 - Confirm every required variable against the Zod schemas before launch.
 - This is a deployment baseline; it has not been built or smoke-tested on a Linux Docker host in this environment.
-- The backend health check assumes `GET /api/v1` returns a non-5xx response. Adjust it if the route contract changes.
+- The backend health check expects `GET /api/v1` to return HTTP 200, using the application health controller. The frontend health check expects HTTP 200 from `/`.
