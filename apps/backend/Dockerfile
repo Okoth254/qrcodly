@@ -10,6 +10,7 @@ COPY patches ./patches
 COPY packages ./packages
 COPY apps ./apps
 RUN pnpm install --frozen-lockfile
+ENV SKIP_ENV_VALIDATION=1
 RUN pnpm run build:shared-packages
 RUN pnpm --filter @apps/backend build
 FROM node:22-bookworm-slim AS runtime
