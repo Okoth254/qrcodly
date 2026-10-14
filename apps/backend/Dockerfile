@@ -8,10 +8,7 @@ RUN corepack prepare pnpm@11.13.1 --activate
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY patches ./patches
 COPY packages ./packages
-COPY apps/backend ./apps/backend
-COPY apps/frontend/package.json ./apps/frontend/package.json
-COPY apps/mcp-server/package.json ./apps/mcp-server/package.json
-COPY apps/browser-extension/package.json ./apps/browser-extension/package.json
+COPY apps ./apps
 RUN pnpm install --frozen-lockfile
 RUN pnpm run build:shared-packages
 RUN pnpm --filter @apps/backend build
