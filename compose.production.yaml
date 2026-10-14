@@ -38,12 +38,6 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env.docker}
     volumes: [minio-data:/data]
     networks: [internal]
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-      start_period: 20s
   minio-setup:
     image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
     restart: "no"
@@ -71,6 +65,7 @@ services:
       NODE_ENV: production
       API_HOST: 0.0.0.0
       FRONTEND_URL: ${NEXT_PUBLIC_FRONTEND_URL:?Set NEXT_PUBLIC_FRONTEND_URL in .env.docker}
+      BACKEND_URL: ${BACKEND_URL:?Set BACKEND_URL to the public API origin}
       API_PORT: "5001"
       DB_HOST: db
       DB_PORT: "3306"
@@ -111,22 +106,27 @@ services:
         NEXT_PUBLIC_STRIPE_ADDON_DOMAIN_PRICE_ID_ANNUAL: ${NEXT_PUBLIC_STRIPE_ADDON_DOMAIN_PRICE_ID_ANNUAL:?Set annual domain add-on price ID}
         NEXT_PUBLIC_GOOGLE_API_KEY: ${NEXT_PUBLIC_GOOGLE_API_KEY:?Set NEXT_PUBLIC_GOOGLE_API_KEY}
         NEXT_PUBLIC_CLERK_JS_URL: ${NEXT_PUBLIC_CLERK_JS_URL:-/__clerk-js/dist/clerk.browser.min.js}
-        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:?Set NEXT_PUBLIC_SENTRY_DSN in .env.docker}
         NEXT_PUBLIC_SENTRY_ENVIRONMENT: ${NEXT_PUBLIC_SENTRY_ENVIRONMENT:-production}
         INTERNAL_API_SECRET: ${INTERNAL_API_SECRET:?Set INTERNAL_API_SECRET in .env.docker}
     restart: unless-stopped
     init: true
+    env_file: [./apps/frontend/.env]
     environment:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
       PORT: "3000"
       NEXT_PUBLIC_FRONTEND_URL: ${NEXT_PUBLIC_FRONTEND_URL:?Set NEXT_PUBLIC_FRONTEND_URL in .env.docker}
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?Set NEXT_PUBLIC_API_URL in .env.docker}
+      NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:?Set NEXT_PUBLIC_SENTRY_DSN in .env.docker}
+      NEXT_PUBLIC_SENTRY_ENVIRONMENT: ${NEXT_PUBLIC_SENTRY_ENVIRONMENT:-production}
+      AXIOM_TOKEN: ${AXIOM_TOKEN:-}
+      AXIOM_DATASET: ${AXIOM_DATASET:-}
       CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:?Set CLERK_SECRET_KEY in .env.docker}
       INTERNAL_API_SECRET: ${INTERNAL_API_SECRET:?Set INTERNAL_API_SECRET in .env.docker}
     depends_on:
       backend:
-        condition: service_started
+        condition: service_healthy
     ports:
       - "${FRONTEND_BIND:-127.0.0.1}:${FRONTEND_PORT:-3000}:3000"
     networks: [internal]
