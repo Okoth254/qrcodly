@@ -7,8 +7,8 @@ This production-oriented Compose file runs the frontend and API as built images 
 1. Copy `apps/backend/.env.example` to `apps/backend/.env` and `apps/frontend/.env.example` to `apps/frontend/.env`.
 2. Copy `.env.docker.example` to `.env.docker`. Replace every placeholder with actual values. Use different randomly generated values for database/root/MinIO passwords and the internal API secret.
 3. Complete `apps/backend/.env` according to `apps/backend/src/core/config/env.ts`, including required backend/public URLs, DB credentials, Redis, S3, Clerk, Stripe, Sentry, Umami, Cloudflare, analytics encryption key, SMTP and any other enabled integrations.
-4. Set `DB_HOST=db`, `DB_USER=qrcodly`, `DB_PASSWORD` to `MYSQL_PASSWORD`, `DB_NAME=qrcodly`, `REDIS_URL=redis://redis:6379`, and `S3_ENDPOINT=http://minio:9000` in the backend environment.
-5. Complete the frontend variables using `apps/frontend/src/env.js`. Public `NEXT_PUBLIC_*` values are embedded at image build time, so changes to them require rebuilding the frontend image.
+4. Set `DB_HOST=db`, `DB_USER=qrcodly`, `DB_PASSWORD` to `MYSQL_PASSWORD`, `DB_NAME=qrcodly`, `REDIS_URL=redis://redis:6379`, and `S3_ENDPOINT=http://minio:9000` in the backend environment. Set `BACKEND_URL` to the public API origin without `/api/v1` (for server-side API calls) and `NEXT_PUBLIC_API_URL` to the public API URL including `/api/v1`.
+5. Complete the frontend variables using `apps/frontend/src/env.js`, including a real `NEXT_PUBLIC_SENTRY_DSN` (required by the current schema). The frontend container loads `apps/frontend/.env` for server-only values such as Axiom and Clerk secrets. Public `NEXT_PUBLIC_*` values are embedded at image build time, so changes to them require rebuilding the frontend image.
 6. Configure MinIO with a dedicated least-privilege application user. The setup job creates the bucket but does not enable public anonymous reads. Configure an explicit bucket policy, signed URLs, or a CDN if public asset access is required.
 
 ## Build and start
