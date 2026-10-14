@@ -49,10 +49,18 @@ services:
       - |
         until mc alias set local http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD"; do sleep 2; done
         mc mb --ignore-existing local/qrcodly
-        echo "Bucket qrcodly ensured. Configure a least-privilege application user and asset policy explicitly."
+        mc admin policy info local qrcodly-app >/dev/null 2>&1 || mc admin policy create local qrcodly-app /config/qrcodly-app-policy.json
+        mc admin user info local "$MINIO_APP_USER" >/dev/null 2>&1 || mc admin user add local "$MINIO_APP_USER" "$MINIO_APP_PASSWORD"
+        mc admin policy attach local qrcodly-app --user "$MINIO_APP_USER"
+        mc anonymous set download local/qrcodly
+        echo "Bucket qrcodly ensured; application user/policy configured and public download enabled for app-generated assets."
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Set MINIO_ROOT_USER in .env.docker}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env.docker}
+      MINIO_APP_USER: ${MINIO_APP_USER:?Set MINIO_APP_USER in .env.docker}
+      MINIO_APP_PASSWORD: ${MINIO_APP_PASSWORD:?Set MINIO_APP_PASSWORD in .env.docker}
+    volumes:
+      - ./docker/minio/qrcodly-app-policy.json:/config/qrcodly-app-policy.json:ro
     networks: [internal]
   backend:
     build:
@@ -75,14 +83,16 @@ services:
       REDIS_URL: redis://redis:6379
       S3_ENDPOINT: http://minio:9000
       S3_BUCKET_NAME: qrcodly
+      S3_UPLOAD_KEY: ${MINIO_APP_USER:?Set MINIO_APP_USER in .env.docker}
+      S3_UPLOAD_SECRET: ${MINIO_APP_PASSWORD:?Set MINIO_APP_PASSWORD in .env.docker}
       INTERNAL_API_SECRET: ${INTERNAL_API_SECRET:?Set INTERNAL_API_SECRET in .env.docker}
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
-      minio:
-        condition: service_started
+      minio-setup:
+        condition: service_completed_successfully
     ports:
       - "${BACKEND_BIND:-127.0.0.1}:${BACKEND_PORT:-5001}:5001"
     networks: [internal]
