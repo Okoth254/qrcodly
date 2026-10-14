@@ -25,6 +25,7 @@ COPY --from=build --chown=app:app /app/apps/backend/package.json ./apps/backend/
 COPY --from=build --chown=app:app /app/node_modules ./node_modules
 COPY --from=build --chown=app:app /app/apps/backend/node_modules ./apps/backend/node_modules
 COPY --from=build --chown=app:app /app/packages ./packages
+COPY --from=build --chown=app:app /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 USER app
 WORKDIR /app/apps/backend
 EXPOSE 5001
