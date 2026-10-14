@@ -35,6 +35,7 @@ WORKDIR /app
 RUN groupadd --system --gid 10001 app && useradd --system --uid 10001 --gid app --home-dir /app app
 COPY --from=build --chown=app:app /app/apps/frontend/.next/standalone ./
 COPY --from=build --chown=app:app /app/apps/frontend/.next/static ./apps/frontend/.next/static
+RUN mkdir -p /app/apps/frontend/public
 COPY --from=build --chown=app:app /app/apps/frontend/public ./apps/frontend/public
 USER app
 EXPOSE 3000
