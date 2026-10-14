@@ -30,7 +30,9 @@ qrcodly/
 │   ├── shared/             # Zod schemas, DTOs, and shared utilities
 │   ├── eslint-config/      # Shared ESLint configuration
 │   └── typescript-config/  # Shared TypeScript configuration
-└── docker-compose.yaml     # Local development services
+├── docker-compose.yaml     # Local development services
+├── compose.production.yaml # Production deployment stack
+└── docs/deployment/docker.md # Docker deployment instructions
 ```
 
 See per-app READMEs for architecture details:
