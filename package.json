@@ -1,62 +1,62 @@
 {
-	"name": "qrcodly-monorepo",
-	"version": "1.0.0",
-	"description": "Open-source QR code generator and management platform",
-	"private": true,
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/FloB95/qrcodly.git"
-	},
-	"homepage": "https://qrcodly.com",
-	"license": "MIT",
-	"author": "Florian Breuer",
-	"keywords": [
-		"qr-code",
-		"qr-generator",
-		"url-shortener",
-		"nextjs",
-		"fastify",
-		"open-source"
-	],
-	"engines": {
-		"node": ">=22.11.0",
-		"pnpm": ">=11.13.1"
-	},
-	"packageManager": "pnpm@11.13.1",
-	"scripts": {
-		"setup": "pnpm install",
-		"build": "pnpm -r --if-present run build",
-		"format": "prettier --config .prettierrc.json --write .",
-		"lint": "pnpm -r --if-present run lint",
-		"clean": "pnpm -r --if-present run clean",
-		"build:shared-package": "cd packages/shared && pnpm build",
-		"build:db-package": "cd packages/db && pnpm build",
-		"build:shared-packages": "pnpm run build:shared-package && pnpm run build:db-package",
-		"backend:build": "pnpm run build:shared-packages && cd apps/backend && pnpm build",
-		"backend:start": "cd apps/backend && pnpm run start",
-		"backend:dev": "cd apps/backend && pnpm run dev",
-		"backend:cli": "cd apps/backend && node build/src/cli.js",
-		"frontend:build": "pnpm run build:shared-packages && cd apps/frontend && pnpm build",
-		"frontend:start": "cd apps/frontend && pnpm run start",
-		"frontend:dev": "cd apps/frontend && pnpm run dev",
-		"mcp-server:build": "cd apps/mcp-server && pnpm build",
-		"mcp-server:start": "cd apps/mcp-server && pnpm run start",
-		"mcp-server:dev": "cd apps/mcp-server && pnpm run dev",
-		"start:dev": "pnpm run backend:dev & pnpm run frontend:dev",
-		"desktop:dev": "cd apps/desktop && pnpm run dev",
-		"desktop:build": "cd apps/desktop && pnpm run build",
-		"desktop:package": "cd apps/desktop && pnpm run build && pnpm run package",
-		"desktop:package:dir": "cd apps/desktop && pnpm run build && pnpm run package:dir"
-	},
-	"devDependencies": {
-		"@types/jest": "^30.0.0",
-		"@types/node": "^26.1.1",
-		"eslint": "^9.39.2",
-		"jest": "^30.4.2",
-		"lefthook": "^2.1.10",
-		"prettier": "^3.9.5",
-		"qrcodly-eslint-config": "workspace:*",
-		"rimraf": "^6.1.3",
-		"typescript": "catalog:"
-	}
+  "name": "qrcodly-monorepo",
+  "version": "1.0.0",
+  "description": "Open-source QR code generator and management platform",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Okoth254/qrcodly.git"
+  },
+  "homepage": "https://qrcodly.com",
+  "license": "MIT",
+  "author": "Florian Breuer",
+  "keywords": [
+    "qr-code",
+    "qr-generator",
+    "url-shortener",
+    "nextjs",
+    "fastify",
+    "open-source"
+  ],
+  "engines": {
+    "node": ">=22.11.0",
+    "pnpm": ">=11.13.1"
+  },
+  "packageManager": "pnpm@11.13.1",
+  "scripts": {
+    "setup": "pnpm install",
+    "build": "pnpm -r --if-present run build",
+    "format": "prettier --config .prettierrc.json --write .",
+    "lint": "pnpm -r --if-present run lint",
+    "clean": "pnpm -r --if-present run clean",
+    "build:shared-package": "cd packages/shared && pnpm build",
+    "build:db-package": "cd packages/db && pnpm build",
+    "build:shared-packages": "pnpm run build:shared-package && pnpm run build:db-package",
+    "backend:build": "pnpm run build:shared-packages && cd apps/backend && pnpm build",
+    "backend:start": "cd apps/backend && pnpm run start",
+    "backend:dev": "cd apps/backend && pnpm run dev",
+    "backend:cli": "cd apps/backend && node build/src/cli.js",
+    "frontend:build": "pnpm run build:shared-packages && cd apps/frontend && pnpm build",
+    "frontend:start": "cd apps/frontend && pnpm run start",
+    "frontend:dev": "cd apps/frontend && pnpm run dev",
+    "mcp-server:build": "cd apps/mcp-server && pnpm build",
+    "mcp-server:start": "cd apps/mcp-server && pnpm run start",
+    "mcp-server:dev": "cd apps/mcp-server && pnpm run dev",
+    "start:dev": "pnpm run backend:dev & pnpm run frontend:dev",
+    "desktop:dev": "cd apps/desktop && pnpm run dev",
+    "desktop:build": "cd apps/desktop && pnpm run build",
+    "desktop:package": "cd apps/desktop && pnpm run build && pnpm run package",
+    "desktop:package:dir": "cd apps/desktop && pnpm run build && pnpm run package:dir"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.1.1",
+    "eslint": "^9.39.2",
+    "jest": "^30.4.2",
+    "lefthook": "^2.1.10",
+    "prettier": "^3.9.5",
+    "qrcodly-eslint-config": "workspace:*",
+    "rimraf": "^6.1.3",
+    "typescript": "catalog:"
+  }
 }
