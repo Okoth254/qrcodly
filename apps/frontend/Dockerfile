@@ -1,0 +1,41 @@
+# syntax=docker/dockerfile:1.7
+FROM node:22-bookworm-slim AS base
+ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
+RUN corepack enable
+WORKDIR /app
+FROM base AS build
+RUN corepack prepare pnpm@11.13.1 --activate
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY patches ./patches
+COPY packages ./packages
+COPY apps/frontend ./apps/frontend
+COPY apps/backend/package.json ./apps/backend/package.json
+COPY apps/mcp-server/package.json ./apps/mcp-server/package.json
+COPY apps/browser-extension/package.json ./apps/browser-extension/package.json
+RUN pnpm install --frozen-lockfile
+RUN pnpm run build:shared-package
+WORKDIR /app/apps/frontend
+ARG NEXT_PUBLIC_FRONTEND_URL
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+ARG NEXT_PUBLIC_STRIPE_PRO_PRICE_ID_MONTHLY
+ARG NEXT_PUBLIC_STRIPE_PRO_PRICE_ID_ANNUAL
+ARG NEXT_PUBLIC_STRIPE_ADDON_DOMAIN_PRICE_ID_MONTHLY
+ARG NEXT_PUBLIC_STRIPE_ADDON_DOMAIN_PRICE_ID_ANNUAL
+ARG NEXT_PUBLIC_GOOGLE_API_KEY
+ARG NEXT_PUBLIC_CLERK_JS_URL=/__clerk-js/dist/clerk.browser.min.js
+ARG NEXT_PUBLIC_SENTRY_DSN=
+ARG NEXT_PUBLIC_SENTRY_ENVIRONMENT=production
+ARG INTERNAL_API_SECRET
+ENV NODE_ENV=production SKIP_ENV_VALIDATION=1 NEXT_PUBLIC_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_URL NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY NEXT_PUBLIC_STRIPE_PRO_PRICE_ID_MONTHLY=$NEXT_PUBLIC_STRIPE_PRO_PRICE_ID_MONTHLY NEXT_PUBLIC_STRIPE_PRO_PRICE_ID_ANNUAL=$NEXT_PUBLIC_STRIPE_PRO_PRICE_ID_ANNUAL NEXT_PUBLIC_STRIPE_ADDON_DOMAIN_PRICE_ID_MONTHLY=$NEXT_PUBLIC_STRIPE_ADDON_DOMAIN_PRICE_ID_MONTHLY NEXT_PUBLIC_STRIPE_ADDON_DOMAIN_PRICE_ID_ANNUAL=$NEXT_PUBLIC_STRIPE_ADDON_DOMAIN_PRICE_ID_ANNUAL NEXT_PUBLIC_GOOGLE_API_KEY=$NEXT_PUBLIC_GOOGLE_API_KEY NEXT_PUBLIC_CLERK_JS_URL=$NEXT_PUBLIC_CLERK_JS_URL NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN NEXT_PUBLIC_SENTRY_ENVIRONMENT=$NEXT_PUBLIC_SENTRY_ENVIRONMENT INTERNAL_API_SECRET=$INTERNAL_API_SECRET
+RUN pnpm run build
+FROM node:22-bookworm-slim AS runtime
+ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0
+WORKDIR /app
+RUN groupadd --system --gid 10001 app && useradd --system --uid 10001 --gid app --home-dir /app app
+COPY --from=build --chown=app:app /app/apps/frontend/.next/standalone ./
+COPY --from=build --chown=app:app /app/apps/frontend/.next/static ./apps/frontend/.next/static
+COPY --from=build --chown=app:app /app/apps/frontend/public ./apps/frontend/public
+USER app
+EXPOSE 3000
+CMD ["node", "apps/frontend/server.js"]
