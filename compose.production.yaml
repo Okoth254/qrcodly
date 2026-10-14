@@ -92,7 +92,7 @@ services:
       - "${BACKEND_BIND:-127.0.0.1}:${BACKEND_PORT:-5001}:5001"
     networks: [internal]
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch(\u0027http://127.0.0.1:5001/api/v1\u0027).then(r=>process.exit(r.status < 500 ? 0 : 1)).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch(String.fromCharCode(104,116,116,112,58,47,47,49,50,55,46,48,46,48,46,49,58,53,48,48,49,47,97,112,105,47,118,49)).then(r=>process.exit(r.status < 500 ? 0 : 1)).catch(()=>process.exit(1))"]
       interval: 20s
       timeout: 5s
       retries: 5
@@ -131,7 +131,7 @@ services:
       - "${FRONTEND_BIND:-127.0.0.1}:${FRONTEND_PORT:-3000}:3000"
     networks: [internal]
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch(\u0027http://127.0.0.1:3000\u0027).then(r=>process.exit(r.status < 500 ? 0 : 1)).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch(String.fromCharCode(104,116,116,112,58,47,47,49,50,55,46,48,46,48,46,49,58,51,48,48,48)).then(r=>process.exit(r.status < 500 ? 0 : 1)).catch(()=>process.exit(1))"]
       interval: 20s
       timeout: 5s
       retries: 5
